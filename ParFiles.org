@@ -1,0 +1,107 @@
+This is a test to see if multiple units could be placed in an org file in a way to document a FactoryTalk parameter file.
+
+* Project Parameter File
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  !=====
+  ! Please see ParFiles.org to make any changes to this parameter file
+  !=====
+
+#+end_src
+
+* Unit 100 - Test Unit 1
+Use parameter number range 100
+** Digital Status Indicators
+Use parameter numbers 100 -1 10
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #100=U100_running
+  #101=U100_alm
+
+#+end_src
+
+** Digital Alarm Indicators
+Use parameter numbers 111-120
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #111=U100_heat_alm
+  #112=U100_ol_alm
+
+#+end_src
+
+** Analog Status Indicators
+Use parameter numbers 121-130 
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #121=U100_amps
+  #122=U100_rpm
+
+#+end_src
+
+* Unit 200 - Test Unit 2
+Use parameter number range 200
+** Digital Status Indicators
+Use parameter numbers 200-210
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #200=U200_running
+  #201=U200_alm
+
+#+end_src
+
+** Digital Alarm Indicators
+Use parameter numbers 211-220
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #211=U200_heat_alm
+  #212=U200_ol_alm
+
+#+end_src
+
+** Analog Status Indicators
+Use parameter numbers 221-230
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #221=U200_amps
+  #222=U200_rpm
+
+#+end_src
+
+* Unit 300 - Test Unit 3
+Use parameter number range 300
+** Digital Status Indicators
+Use parameter numbers 300-310
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #300=U300_running
+  #301=U300_alm
+
+#+end_src
+
+** Digital Alarm Indicators
+Use parameter numbers 311-320
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #311=U300_heat_alm
+  #312=U300_ol_alm
+
+#+end_src
+
+** Analog Status Indicators
+Use parameter numbers 321-330
+
+#+begin_src conf-unix :tangle /home/belgarath//OrgFiles//Test.par
+
+  #321=U300_amps
+  #322=U300_rpm
+
+#+end_src

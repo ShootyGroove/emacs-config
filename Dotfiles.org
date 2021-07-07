@@ -1,0 +1,58 @@
+* How to create a Dotfiles Folder
+-----
+- Create the folder in the right location
+- Move some configuration files into it
+- Link them back to the original location
+- Verify that it works!
+
+* Create a folder to store you dotfiles
+-----
+Create this directory in the root of you home folder so that it's easier to use tools like GNU Stow:
+
+#+begin_src
+
+mkdir ~/.dotfiles
+
+#+end_src
+
+That is the new folder to to store dotfiles in.
+
+* Move some of your existing configuration files and folders into it
+-----
+Move the configuration files you care about to an equivalent file path in ~/.dotfiles:
+
+#+begin_src 
+
+  mv ~/.emacs.d ~/.dotfiles/
+  mv ~/.bash_profile ~/.dotfiles
+
+  # ... etc ...
+
+#+end_src
+
+You should mirror the directory structure that the files have in your home folder on Linux and macOS so that dotfiles management tools can easily place the files where they belong.
+
+On Windows this doesn’t matter quite as much.
+
+* Create symbolic links to the original config file locations
+-----
+You can use the =ln= command on Linux and macOS to create symbolic links from a source file or directory to a new location:
+
+#+begin_src
+
+# Create a new link called ~/.emacs.d which comes from ~/.dotfiles/.emacs.d
+ln -sf ~/.dotfiles/.emacs.d ~/.emacs.d
+
+#+end_src
+
+We’ll use this to create links back into the home directory for all the configuration files and folders we moved.
+
+* The downside of symbolic links
+-----
+As you might imagine, it’s tedious to create and manage symbolic links like this, especially when you are syncing them between machines.
+
+Some people solve this by writing a “bootstrapping” script that can create all symbolic links automatically.
+
+It’s easier to use a tool meant for this purpose, we will talk about GNU Stow and others!
+
+
