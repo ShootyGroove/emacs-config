@@ -10,9 +10,7 @@
 Create this directory in the root of you home folder so that it's easier to use tools like GNU Stow:
 
 #+begin_src
-
 mkdir ~/.dotfiles
-
 #+end_src
 
 That is the new folder to to store dotfiles in.
