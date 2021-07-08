@@ -20,12 +20,10 @@ That is the new folder to to store dotfiles in.
 Move the configuration files you care about to an equivalent file path in ~/.dotfiles:
 
 #+begin_src 
-
   mv ~/.emacs.d ~/.dotfiles/
   mv ~/.bash_profile ~/.dotfiles
 
   # ... etc ...
-
 #+end_src
 
 You should mirror the directory structure that the files have in your home folder on Linux and macOS so that dotfiles management tools can easily place the files where they belong.
@@ -37,10 +35,8 @@ On Windows this doesn’t matter quite as much.
 You can use the =ln= command on Linux and macOS to create symbolic links from a source file or directory to a new location:
 
 #+begin_src
-
 # Create a new link called ~/.emacs.d which comes from ~/.dotfiles/.emacs.d
 ln -sf ~/.dotfiles/.emacs.d ~/.emacs.d
-
 #+end_src
 
 We’ll use this to create links back into the home directory for all the configuration files and folders we moved.
