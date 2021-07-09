@@ -1,7 +1,7 @@
-#+title Ranger Configuration
+#+title: Ranger Configuration
 #+PROPERTY: header-args:conf-unix :tangle ~/.dotfiles/.config/ranger/rc.conf
 
-* TABLE OF CONTENTS :toc:
+* TABLE OF CONTENTS :TOC:
 
 * About
    This file contains the default startup commands for ranger.
