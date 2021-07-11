@@ -182,7 +182,7 @@ This section configures basic UI settings that remove unneeded elements to make 
   (tooltip-mode -1)           ; Disable tooltips
   (set-fringe-mode 5)         ; Give some breathing room
   (show-paren-mode t)         ; Show matching paren
-  ;; (menu-bar-mode -1)          ; Disable the menu bar
+  (menu-bar-mode -1)          ; Disable the menu bar
 
   ;; Set up the visible bell
   (setq visible-bell t)
@@ -439,6 +439,46 @@ This is an example of using [[https://github.com/abo-abo/hydra][Hydra]] to desig
 
   (rune/leader-keys
     "ts" '(hydra-text-scale/body :which-key "scale text"))
+
+#+end_src
+
+* Window Management
+** winner-mode
+=winner-mode= provides useful functions for undoing and redoing window configurations:
+
+- =winner-undo= (=C-c left= or =C-w u=) bound below)
+- =winner-redo= (=C-c right= or =C-w U=) bound below)
+
+#+begin_src emacs-lisp
+
+  (use-package winner-mode
+    :ensure nil
+    :bind (:map evil-window-map
+                ("u" . winner-undo)
+                ("U" . winner-redo))
+    :config
+    (winner-mode))
+
+#+end_src
+
+** ace-window
+[[https://github.com/abo-abo/ace-window][ace-window]] makes it easy to jump between visible windows in your Emacs frame, just run the =ace-window= command and press the number displayed in the upper left corner of the window you want to switch to. It also enables you to swap, delete, and move windows using similar functionality.
+
+#+begin_src emacs-lisp
+
+  ;; (use-package ace-window)
+
+#+end_src
+
+** winum-mode
+This mode shows numbers in your windows’ mode lines to tell you what keys you can press after using the key binding =C-x w=. Check out the [[https://github.com/deb0ch/emacs-winum][winum-mode]] page for more useful tips!
+
+#+begin_src emacs-lisp
+
+  (use-package winum
+    :bind ("C-x w" . winum-mode)
+    :config
+    (winum-mode))
 
 #+end_src
 
