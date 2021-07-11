@@ -966,6 +966,7 @@ Make sure the tic program is available on your machine (could be part of ncurses
 *** Key Bindings
 
 *Navigation*
+
 *Emacs / Evil*
 - =n / j= - next line
 - =p / k= - previous line
