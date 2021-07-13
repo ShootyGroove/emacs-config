@@ -10,9 +10,12 @@ NOTE: init.el is generated from this Emacs.org file. Edit this file in Emacs and
 
 #+begin_src emacs-lisp
 
-;; May need to change the following for a different system
+  ;; May need to change the following for a different system
   (defvar mls/default-font-size 110)
   (defvar mls/default-variable-font-size 110)
+
+  ;; Make frame transparency overridable
+  (defvar mls/frame-transparency '(90 . 90)) 
 
 #+end_src
 
@@ -479,6 +482,13 @@ This mode shows numbers in your windows’ mode lines to tell you what keys you 
     :bind ("C-x w" . winum-mode)
     :config
     (winum-mode))
+
+#+end_src
+
+** tab-bar
+#+begin_src emacs-lisp
+
+;; (setq tab-bar-tab
 
 #+end_src
 
