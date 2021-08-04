@@ -1,4 +1,9 @@
-This is a test to see if multiple units could be placed in an org file in a way to document a FactoryTalk parameter file.
+#+TITLE: Test.par 
+#+DESCRIPTION: Test file for Rockwell Automation parameter file 
+#+AUTHOR: Mike Saltis
+#+EXPORT_FILE_NAME: /home/belgarath/Documents/HTML/TestPar.html
+#+SETUPFILE: /home/belgarath/OrgFiles/Configuration/org-html-themes/org/theme-readtheorg-local.setup
+#+OPTIONS: num:nil
 
 * Project Parameter File
 

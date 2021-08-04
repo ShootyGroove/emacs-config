@@ -699,13 +699,14 @@ To execute or export code in org-mode code blocks, you’ll need to set up org-b
 
 #+begin_src emacs-lisp
 
-  (with-eval-after-load 'org
-    (org-babel-do-load-languages
-     'org-babel-load-languages
-     '((emacs-lisp . t)
-       (python . t)))
+    (with-eval-after-load 'org
+      (org-babel-do-load-languages
+       'org-babel-load-languages
+       '((emacs-lisp . t)
+         (python . t)
+         (shell . t)))
 
-    (push '("conf-unix" . conf-unix) org-src-lang-modes))
+      (push '("conf-unix" . conf-unix) org-src-lang-modes))
 
 #+end_src
 
@@ -723,29 +724,113 @@ You can add more src block templates below by copying one of the lines and chang
     (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
     (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
     (add-to-list 'org-structure-template-alist '("py" . "src python"))
-    (add-to-list 'org-structure-template-alist '("config" . "src conf-unix")))
+    (add-to-list 'org-structure-template-alist '("conf" . "src conf-unix")))
 
 #+end_src
 
 ** Auto-tangle Configuration Files
 This snippet adds a hook to org-mode buffers so that efs/org-babel-tangle-config gets executed each time such a buffer gets saved. This function checks to see if the file being saved is the Emacs.org file you’re looking at right now, and if so, automatically exports the configuration here to the associated output files.
 
+*What is going on here*
+=add-hook= for =org-mode= so anytime and org mode buffer gets opened this hook is going to be fired.  Set an anonymous function that then calls =add-hook= again for this current buffer to say, after this buffer gets saved,  (=after-save-hook=) I  want to run this function =mls/org-babel-tangle-config= that is being defined. Doing this will tangle only the Emacs buffer and no other org mode buffer. 
+
 #+begin_src emacs-lisp
 
   ;; Automatically tangle Emacs.org config file after saving 
-  (defun efs/org-babel-tangle-config ()
+  (defun mls/org-babel-tangle-config ()
     (when (string-equal (buffer-file-name)
                         (expand-file-name "~/OrgFiles/Configuration/Emacs.org"))
+
       ;; Dynamic scoping to the rescue
       (let ((org-confirm-babel-evaluate nil))
         (org-babel-tangle))))
 
-  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
+  (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'mls/org-babel-tangle-config)))
+
+#+end_src
+
+** Org-Roam
+
+#+begin_src emacs-lisp
+
+  (use-package org-roam
+    :ensure t
+    :init
+    (setq org-roam-v2-ack t)
+    :custom
+    (org-roam-directory (file-truename "~/RoamNotes"))
+    :bind (("C-c n l" . org-roam-buffer-toggle)
+           ("C-c n f" . org-roam-node-find)
+           ("C-c n g" . org-roam-graph)
+           ("C-c n i" . org-roam-node-insert)
+           ("C-c n c" . org-roam-capture)
+           ;; Dailies
+           ("C-c n j" . org-roam-dailies-capture-today))
+    :config
+    (org-roam-setup)
+    ;; If using org-roam-protocol
+    (require 'org-roam-protocol))
 
 #+end_src
 
 * Development
 ** Languages
+** Web Development
+*** web-mode.el
+[[https://web-mode.org/][web-mode.el]] is an autonomous emacs major-mode for editing web templates. HTML documents can embed parts (CSS/JavaScript) and blocks (client/server side).
+
+#+begin_src emacs-lisp
+
+  (use-package web-mode)
+  (add-to-list 'auto-mode-alist '("\\.ts\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.css?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . web-mode))
+
+  (defun my-web-mode-hook ()
+    "Hooks for Web mode."
+    (setq web-mode-markup-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+    (setq web-mode-css-indent-offset 2)
+    )
+  (add-hook 'web-mode-hook 'my-web-mode-hook)
+  (setq tab-width 2)
+
+  (setq web-mode-enable-current-column-highlight t)
+  (setq web-mode-enable-current-element-highlight t)
+
+#+end_src
+
+*** emmet-mode
+[[https://github.com/smihica/emmet-mode][emmet-mode]]
+
+#+begin_src emacs-lisp
+
+  (use-package emmet-mode)
+  (add-hook 'web-mode-hook  'emmet-mode) 
+  (add-hook 'web-mode-before-auto-complete-hooks
+            '(lambda ()
+               (let ((web-mode-cur-language
+                      (web-mode-language-at-pos)))
+                 (if (string= web-mode-cur-language "php")
+                     (yas-activate-extra-mode 'php-mode)
+                   (yas-deactivate-extra-mode 'php-mode))
+                 (if (string= web-mode-cur-language "css")
+                     (setq emmet-use-css-transform t)
+                   (setq emmet-use-css-transform nil)))))
+
+#+end_src
+
+*** js2-mode
+js2-mode
+
+#+begin_src emacs-lisp
+
+(use-package js2-mode)
+  (add-to-list 'auto-mode-alist '("\\.js\\'" . js2-mode))
+
+#+end_src
+
 ** IDE Featurs with lsp-mode
 *** lsp-mode
 Use the [[https://emacs-lsp.github.io/lsp-mode/][lsp-mode]] to enable IDE-like functionality for many different programming languages via “language servers” that speak the [[https://microsoft.github.io/language-server-protocol/][Language Server Protocol]]. Before trying to set up =lsp-mode= for a particular language, check out the [[https://emacs-lsp.github.io/lsp-mode/page/languages/][documentation for your language]] so that you can learn which language servers are available and how to install them. The =lsp-keymap-prefix= setting enables you to define a prefix for where lsp-mode’s default keybindings will be added. I *highly recommend* using the prefix to find out what you can do with =lsp-mode= in a buffer. The =which-key= integration adds helpful descriptions of the various keys so you should be able to learn a lot just by pressing =C-c l= in a =lsp-mode= buffer and trying different things that you find there.
@@ -856,18 +941,22 @@ This will install the [[https://github.com/theia-ide/typescript-language-server]
 
 ** Company Mode
 
+    
 #+begin_src emacs-lisp
 
   (use-package company
     :after lsp-mode
     :hook (prog-mode . company-mode)
     :bind (:map company-active-map
-           ("<tab>" . company-complete-selection))
-          (:map lsp-mode-map
-           ("<tab>" . company-indent-or-complete-common))
+                ("<tab>" . company-complete-selection))
+    (:map lsp-mode-map
+          ("<tab>" . company-indent-or-complete-common))
     :custom
     (company-minimum-prefix-length 1)
     (company-idle-delay 0.0))
+
+  ;; (defun my-web-mode-hook ()
+    ;; (set (make-local-variable 'company-backends) '(company-css company-web-html company-yasnippet company-files))
 
   (use-package company-box
     :hook (company-mode . company-box-mode))

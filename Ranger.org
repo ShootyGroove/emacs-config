@@ -551,6 +551,7 @@ You can set local options that only affect a single directory.
   map ge cd /etc
   map gu cd /usr
   map gd cd /dev
+  map gD cd /home/belgarath/Insync/shootygroove@gmail.com/Google Drive/
   map gl cd -r .
   map gL cd -r %f
   map go cd /opt

@@ -1,0 +1,451 @@
+#+Title: Bash Configuration
+#+PROPERTY: header-args:shell :tangle ~/.dotfiles/bash/.bashrc :mkdirp yes
+
+* General Settings
+** vim commands
+This will allow use of vim commands on the command line.
+
+#+begin_src shell
+  # set vim type controls
+  # set -o vi
+
+#+end_src
+
+** Set default editor
+Setting up the default editor.
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bashrc
+  # Use emacs as the default editor
+  export EDITOR=emacs
+
+#+end_src
+
+** Interactively
+If not running interactively, don't do anything
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bashrc
+  # If not running interactively, don't do anything
+  case $- in
+      ,*i*) ;;
+      ,*) return;;
+  esac
+
+#+end_src
+
+* History
+** HISTCONTROL
+Don't put duplicate lines or lines starting with space in the history.
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bashrc
+  #Don't put duplicate lines or lines starting with space in the history.
+  HISTCONTROL=ignoreboth
+  HISTTIMEFORMAT="%F %T "
+
+#+end_src
+
+Append to the history file, don't overwrite it
+#+begin_src shell :tangle ~/.dotfiles/bash/.bashrc
+  # Append to the history file, don't overwrite it
+    shopt -s histappend
+
+#+end_src
+
+** History size
+For setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bashrc
+
+  HISTSIZE=2000
+  HISTFILESIZE=2000
+
+#+end_src
+
+** checkwinsize
+If this is set, Bash checks the window size after each external (non-builtin) command and, if necessary, update the values of =LINES= and =COLUMNS=. Enabled by default.
+
+Check the window size after each command and, if necessary, update the values of LINES and COLUMNS.
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bashrc
+
+  shopt -s checkwinsize
+
+#+end_src
+
+** globstar
+If set, the pattern =**= used in a filename expansion context will match all files and zero or more directories and subdirectories. If the pattern is followed by a =/=, only directories and subdirectories match.
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bashrc
+
+  #shopt -s globstar
+
+#+end_src
+
+** lesspipe
+Make less more friendly for non-text input files, see lesspipe(1)
+
+#+begin_src shell
+
+  [ -x /usr/bin/lesspipe ] && eval "$(SHELL=/bin/sh lesspipe)"
+
+#+end_src
+
+** chroot working in
+Set variable identifying the chroot you work in (used in the prompt below)
+
+#+begin_src shell
+
+  if [ -z "${debian_chroot:-}" ] && [ -r /etc/debian_chroot ]; then
+      debian_chroot=$(cat /etc/debian_chroot)
+  fi
+
+#+end_src
+
+** Colors
+Set a fancy prompt (non-color, unless we know we "want" color)
+
+#+begin_src shell
+
+  case "$TERM" in
+      xterm-color|*-256color) color_prompt=yes;;
+  esac
+
+#+end_src
+
+Uncomment for a colored prompt, if the terminal has the capability; turned off by default to not distract the user: the focus in a terminal window should be on the output of commands, not on the prompt.
+
+#+begin_src shell
+
+  force_color_prompt=yes
+
+    if [ -n "$force_color_prompt" ]; then
+        if [ -x /usr/bin/tput ] && tput setaf 1 >&/dev/null; then
+            # We have color support; assume it's compliant with Ecma-48
+            # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+            # a case would tend to support setf rather than setaf.)
+            color_prompt=yes
+        else
+            color_prompt=
+        fi
+    fi
+
+    if [ "$color_prompt" = yes ]; then
+        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    else
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    fi
+    unset color_prompt force_color_prompt
+
+#+end_src
+
+If this is an xterm set the title to user@host:dir
+
+#+begin_src shell
+
+  # case "$TERM" in
+  # xterm*|rxvt*)
+  #     PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
+  #     ;;
+  # *)
+  #     ;;
+  # esac
+
+#+end_src
+
+Enable color support of ls and also add handy aliases
+
+#+begin_src shell
+
+if [ -x /usr/bin/dircolors ]; then
+    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+    alias ls='ls --color=auto'
+    #alias dir='dir --color=auto'
+    #alias vdir='vdir --color=auto'
+
+    alias grep='grep --color=auto'
+    alias fgrep='fgrep --color=auto'
+    alias egrep='egrep --color=auto'
+fi
+
+#+end_src
+
+# colored GCC warnings and errors
+#+begin_src shell
+#export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
+#+end_src
+
+#+begin_src shell
+
+blk='\[\033[01;30m\]'   # Black
+red='\[\033[01;31m\]'   # Red
+grn='\[\033[01;32m\]'   # Green
+ylw='\[\033[01;33m\]'   # Yellow
+blu='\[\033[01;34m\]'   # Blue
+pur='\[\033[01;35m\]'   # Purple
+cyn='\[\033[01;36m\]'   # Cyan
+wht='\[\033[01;37m\]'   # White
+clr='\[\033[00m\]'      # Reset
+
+#+end_src
+
+* Functions
+** Git
+Add color to the Bash prompt and display the current Git branch.
+
+#+begin_src shell
+
+  # Display the current Git branch in the Bash prompt.
+
+  function git_branch() {
+      if [ -d .git ] ; then
+          printf "%s" "($(git branch 2> /dev/null | awk '/\*/{print $2}'))";
+      fi
+  }
+
+  # Set the prompt.
+
+  function bash_prompt(){
+      PS1='${debian_chroot:+($debian_chroot)}'${blu}'$(git_branch)'${pur}' \W'${grn}' \$ '${clr}
+  }
+
+  bash_prompt
+
+#+end_src
+
+Start a new project with Git.
+
+#+begin_src shell
+
+function git_init() {
+    if [ -z "$1" ]; then
+        printf "%s\n" "Please provide a directory name.";
+    else
+        mkdir "$1";
+        builtin cd "$1";
+        pwd;
+        git init;
+        touch readme.md .gitignore LICENSE;
+        echo "# $(basename $PWD)" >> readme.md
+    fi
+}
+
+#+end_src
+
+* Misc Stuff
+** Print System Information
+Display useful system information when opening a terminal.
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bashrc
+
+  clear
+
+  # printf "\n"
+  # printf "   %s\n" "IP ADDR: $(curl ifconfig.me)"
+  # printf "   %s\n" "USER: $(echo $USER)"
+  # printf "   %s\n" "DATE: $(date)"
+  # printf "   %s\n" "UPTIME: $(uptime -p)"
+  # printf "   %s\n" "HOSTNAME: $(hostname -f)"
+  # printf "   %s\n" "CPU: $(awk -F: '/model name/{print $2}' | head -1)"
+  # printf "   %s\n" "KERNEL: $(uname -rms)"
+  # printf "   %s\n" "PACKAGES: $(dpkg --get-selections | wc -l)"
+  # printf "   %s\n" "RESOLUTION: $(xrandr | awk '/\*/{printf $1" "}')"
+  # printf "   %s\n" "MEMORY: $(free -m -h | awk '/Mem/{print $3"/"$2}')"
+  # printf "\n"
+
+#+end_src
+
+* Aliases
+All aliases located in =~/.bash_aliases=. 
+
+#+begin_src shell
+
+if [ -f ~/.bash_aliases ]; then
+    . ~/.bash_aliases
+fi
+#+end_src
+
+** Enable color support
+Enable color support of ls and also add handy aliases
+
+#+begin_src shell
+
+  if [ -x /usr/bin/dircolors ]; then
+      test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
+      alias ls='ls --color=auto'
+      #alias dir='dir --color=auto'
+      #alias vdir='vdir --color=auto'
+      alias grep='grep --color=auto'
+      alias fgrep='fgrep --color=auto'
+      alias egrep='egrep --color=auto'
+  fi
+
+#+end_src
+
+** Programmable Completion
+enable programmable completion features (you don't need to enable this, if it's already enabled in =/etc/bash.bashrc= and =/etc/profile= sources =/etc/bash.bashrc=).
+
+#+begin_src sh :tangle ~/.dotfiles/bash/.bash_aliases
+
+if ! shopt -oq posix; then
+  if [ -f /usr/share/bash-completion/bash_completion ]; then
+    . /usr/share/bash-completion/bash_completion
+  elif [ -f /etc/bash_completion ]; then
+    . /etc/bash_completion
+  fi
+fi
+#+end_src
+
+** Perform updates to system
+Use the following for Ubuntu based system.
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+  #alias updatesys="sudo apt update && sudo apt list --upgradable && sudo apt full-upgrade && sudo apt autoremove && flatpak update && sudo apt clean"
+
+#+end_src
+
+My Fedora updates
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+  alias updatesys="sudo dnf update && sudo rpmconf -a && sudo dnf repoquery --unsatisfied && sudo dnf repoquery --duplicates && sudo dnf autoremove && sudo symlinks -r /usr | grep dangling && flatpak update"
+
+#+end_src
+
+Clean-up
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+  alias cleandangling="sudo symlinks -r -d /usr"
+
+#+end_src
+
+** dnf
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+  alias search='sudo dnf search'
+  alias install='sudo dnf install'
+
+#+end_src
+
+** Misc alias's
+A place to add short, simple, sweet alias's
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+  alias ll='ls -alF'
+  alias la='ls -A'
+  alias l='ls -CF'
+  alias kapow="poweroff"
+  alias pow="restart"
+  alias organize="cd ~/Downloads && ./organize.sh"
+
+  # Press c to clear the terminal screen.
+  alias c="clear"
+
+  # Press h to view the bash history.
+  alias h="history"
+
+  # Display the directory structure better.
+  alias tree="tree --dirsfirst -F"
+
+  # Make a directory and all parent directories with verbosity.
+  alias mkdir="mkdir -p -v"
+
+  # Exit term
+  alias e="exit"
+
+#+end_src
+
+** Perform a resync on onedrive.
+If onedrive systemd service is enabled and running, run the following command to stop the onedrive systemd service, then run resync command.
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+  alias oneresync="systemctl --user stop onedrive && onedrive --synchronize --resync"
+  . "$HOME/.cargo/env"
+
+#+end_src
+
+** Program Sorts
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+  alias space="emacs --with-profile=spacemacs"
+  alias doom="emacs --with-profile=doom"
+  alias vim="nvim"
+  alias vi="nvim"
+  alias vimvim="\vim"
+
+#+end_src
+
+** Useful Alias
+Add an "alert" alias for long running commands.  Use like so:  sleep 10; alert
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+  alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+
+#+end_src
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+# Move to the parent folder.
+alias ..='cd ..;pwd'
+
+# Move up two parent folders.
+alias ...='cd ../..;pwd'
+
+# Move up three parent folders.
+alias ....='cd ../../..;pwd'
+
+#+end_src
+
+** Git
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+# View Git status.
+alias gs='git status'
+
+# Add a file to Git.
+alias ga='git add'
+
+# Add all files to Git.
+alias gaa='git add --all'
+
+# Commit changes to the code.
+alias gc='git commit'
+
+# View the Git log.
+alias gl='git log --oneline'
+
+# Create a new Git branch and move to the new branch at the same time. 
+alias gb='git checkout -b'
+
+# View the difference.
+alias gd='git diff'
+
+#+end_src
+
+** Calendar
+View calendar by typing the first three letters of the month.
+
+#+begin_src shell :tangle ~/.dotfiles/bash/.bash_aliases
+
+# View the calender by typing the first three letters of the month.
+
+alias jan='cal -m 01'
+alias feb='cal -m 02'
+alias mar='cal -m 03'
+alias apr='cal -m 04'
+alias may='cal -m 05'
+alias jun='cal -m 06'
+alias jul='cal -m 07'
+alias aug='cal -m 08'
+alias sep='cal -m 09'
+alias oct='cal -m 10'
+alias nov='cal -m 11'
+alias dec='cal -m 12'
+
+#+end_src

@@ -1,2 +1,0 @@
-#+title Vim Configuration
-#+PROPERTY: header-args:conf-unix :tangle ~/.dotfiles/.config/ranger/rc.conf
